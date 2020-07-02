@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
@@ -276,7 +276,7 @@ textarea
 }
     </style>
 </head>
-<body onload="changeTab(1)">
+<body onload="changeTab(2)">
     <noscript>
         <div class="error">
             <h1>Scripts have been disabled on your browser.</h1>
@@ -303,12 +303,16 @@ textarea
             <td id="sidebar">
                 <div id="spacer"></div>
 		        <a id="tab1" class="selected" href="#" onclick="return changeTab(1)">
-                    <span class="full">Arabic to Latin</span>
-                    <span class="short" title="Arabic to Latin">AL</span>
+                    <span class="full">Arabic -> Latin</span>
+                    <span class="short" title="Arabic -> Latin">AL</span>
                 </a>
-		        <a id="tab2" class="unselected" href="#" onclick="return changeTab(2)">
-                    <span class="full">Latin to Arabic</span>
-                    <span class="short" title="Latin to Arabic">LA</span>
+                <a id="tab2" class="unselected" href="#" onclick="return changeTab(2)">
+                    <span class="full">Latin -> Arabic</span>
+                    <span class="short" title="Latin -> Arabic">LA</span>
+                </a>
+                <a id="tab21" class="unselected" href="#" onclick="return changeTab(21)">
+                    <span class="full">Latin -> Arabic2</span>
+                    <span class="short" title="Latin -> Arabic2">LA</span>
                 </a>
 		        <a id="tab3" class="unselected" href="#" onclick="return changeTab(3)">
                     <span class="full">Standardise Arabic</span>
@@ -645,6 +649,51 @@ var sConvertLatin2Arabic = new Array(
     '\;', '؛'
 );
 
+//Latin to Arabic Array أ
+var sConvertLatin2Arabic2 = new Array(
+    'e\'','ع',
+    '(^|[^a-zêîûçş0-9\'’])([ae])', '$1أ', //insert hamza
+    '(^|[^a-zêîûçş0-9\'’])([aeiouêîû])', '$1ئ$2', //insert hamza
+    '(ئ)([uû])([^êîûçşa-z0-9])', 'و$3', //omit the inserted hamza for 'u' (=and)
+    'a', 'ا',
+    'b', 'ب',
+    'ch|ç', 'چ',
+    'c', 'ج',
+    'd', 'د',
+    'ee|ê|é', 'ێ',
+    'e', 'َ',
+    'f', 'ف',
+    'gh', 'غ',
+    'g', 'گ',
+    'hh', 'ح',
+    'sh|ş', 'ش',
+    'h', 'ھ',
+    'î|y|í', 'ی',
+    'j', 'ژ',
+    'k', 'ک',
+    'll', 'ڵ',
+    'l', 'ل',
+    'm', 'م',
+    'n', 'ن',
+    'o', 'ۆ',
+    'p', 'پ',
+    'q', 'ق',
+    'rr', 'ڕ',
+    'r', 'ر',
+    's', 'س',
+    't', 'ت',
+    'uu|û|ú', 'وو',
+    'u|w', 'و',
+    'v', 'ڤ',
+    'x', 'خ',
+    'z', 'ز',
+    '\'|’', 'ع',
+    '\\u003F', '؟', //question mark
+    '\,', '،',
+    '\;', '؛'
+);
+
+
 var sSuffixes = new Array(
     '[ ]+()ئ(م|ی|ە|ین|ن|ا|ێ|ێن)($|[^ء-يٱ-ە])', //e.g. ziman a
     '[ ]+()(یی|یە|یا|یێ|یێن)($|[^ء-يٱ-ە])', //e.g. zana ye
@@ -954,6 +1003,10 @@ function changeTab(tab) {
             document.getElementById('txtIn').dir = 'ltr';
             document.getElementById('txtOut').dir = 'rtl';
             break;
+        case 21: //Latin to Arabic 2
+            document.getElementById('txtIn').dir = 'ltr';
+            document.getElementById('txtOut').dir = 'rtl';
+            break;
         case 3: //Standardise Arabic
             document.getElementById('txtIn').dir = 'rtl';
             document.getElementById('txtOut').dir = 'rtl';
@@ -1008,28 +1061,52 @@ function convert() {
 
             break;
 
-        case 2: //Latin to Arabic
-            //main conversion            
-            for (i = 0; i < sConvertLatin2Arabic.length; i += 2)
-                s = s.replace(new RegExp(sConvertLatin2Arabic[i], 'gim'), sConvertLatin2Arabic[i + 1]);
+            case 21: //Latin to Arabic 2
+                //main conversion
+                for (i = 0; i < sConvertLatin2Arabic2.length; i += 2)
+                    s = s.replace(new RegExp(sConvertLatin2Arabic2[i], 'gim'), sConvertLatin2Arabic2[i + 1]);
 
-            //convert numbers
-            if (document.getElementById('chkConvertNumbers').checked)
-                for (i = 0; i < sNumbers.length; i += 2)
-                    s = s.replace(new RegExp(sNumbers[i], 'g'), sNumbers[i + 1]);
+                //convert numbers
+                if (document.getElementById('chkConvertNumbers').checked)
+                    for (i = 0; i < sNumbers.length; i += 2)
+                        s = s.replace(new RegExp(sNumbers[i], 'g'), sNumbers[i + 1]);
 
-            //convert ii and i based on the option selected
-            if (!document.getElementById('chkTreatI').checked)
-                s = s.replace(new RegExp('ii', 'gi'), 'ی').replace(new RegExp('i', 'gi'), '');
-            else
-                s = s.replace(new RegExp('i', 'gi'), 'ی');
+                //convert ii and i based on the option selected
+                if (!document.getElementById('chkTreatI').checked)
+                    s = s.replace(new RegExp('ii', 'gi'), 'ی').replace(new RegExp('i', 'gi'), '');
+                else
+                    s = s.replace(new RegExp('i', 'gi'), 'ی');
 
-            //when user chooses to recoginse the dependent verb 'to be' can be separated (e.g. kurd in = kurdin)
-            if (document.getElementById('chkConnectSuffixes').checked)
-                for (i = 0; i < sSuffixes.length; i++)
-                    s = s.replace(new RegExp(sSuffixes[i], 'gim'), '$1$2$3');
+                //when user chooses to recoginse the dependent verb 'to be' can be separated (e.g. kurd in = kurdin)
+                if (document.getElementById('chkConnectSuffixes').checked)
+                    for (i = 0; i < sSuffixes.length; i++)
+                        s = s.replace(new RegExp(sSuffixes[i], 'gim'), '$1$2$3');
 
-            break;
+                break;
+
+
+            case 2: //Latin to Arabic
+                //main conversion
+                for (i = 0; i < sConvertLatin2Arabic.length; i += 2)
+                    s = s.replace(new RegExp(sConvertLatin2Arabic[i], 'gim'), sConvertLatin2Arabic[i + 1]);
+
+                //convert numbers
+                if (document.getElementById('chkConvertNumbers').checked)
+                    for (i = 0; i < sNumbers.length; i += 2)
+                        s = s.replace(new RegExp(sNumbers[i], 'g'), sNumbers[i + 1]);
+
+                //convert ii and i based on the option selected
+                if (!document.getElementById('chkTreatI').checked)
+                    s = s.replace(new RegExp('ii', 'gi'), 'ی').replace(new RegExp('i', 'gi'), '');
+                else
+                    s = s.replace(new RegExp('i', 'gi'), 'ی');
+
+                //when user chooses to recoginse the dependent verb 'to be' can be separated (e.g. kurd in = kurdin)
+                if (document.getElementById('chkConnectSuffixes').checked)
+                    for (i = 0; i < sSuffixes.length; i++)
+                        s = s.replace(new RegExp(sSuffixes[i], 'gim'), '$1$2$3');
+
+                break;
 
         case 3: //Standardise Arabic
             //do Dilan conversions if requested
