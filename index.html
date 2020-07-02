@@ -651,7 +651,9 @@ var sConvertLatin2Arabic = new Array(
 
 //Latin to Arabic Array أ
 var sConvertLatin2Arabic2 = new Array(
+    'a\'','ع',
     'e\'','ع',
+    'h\'','ح',
     '(^|[^a-zêîûçş0-9\'’])([ae])', '$1أ', //insert hamza
     '(^|[^a-zêîûçş0-9\'’])([aeiouêîû])', '$1ئ$2', //insert hamza
     '(ئ)([uû])([^êîûçşa-z0-9])', 'و$3', //omit the inserted hamza for 'u' (=and)
