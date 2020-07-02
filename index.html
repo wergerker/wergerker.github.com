@@ -276,7 +276,7 @@ textarea
 }
     </style>
 </head>
-<body onload="changeTab(2)">
+<body onload="changeTab(6)">
     <noscript>
         <div class="error">
             <h1>Scripts have been disabled on your browser.</h1>
@@ -302,7 +302,7 @@ textarea
         <tr>
             <td id="sidebar">
                 <div id="spacer"></div>
-		        <a id="tab1" class="selected" href="#" onclick="return changeTab(1)">
+		        <a id="tab1" class="unselected" href="#" onclick="return changeTab(1)">
                     <span class="full">Arabic -> Latin</span>
                     <span class="short" title="Arabic -> Latin">AL</span>
                 </a>
@@ -310,9 +310,9 @@ textarea
                     <span class="full">Latin -> Arabic</span>
                     <span class="short" title="Latin -> Arabic">LA</span>
                 </a>
-                <a id="tab21" class="unselected" href="#" onclick="return changeTab(21)">
-                    <span class="full">Latin -> Arabic2</span>
-                    <span class="short" title="Latin -> Arabic2">LA</span>
+                <a id="tab6" class="unselected" href="#" onclick="return changeTab(6)">
+                    <span class="full">Latin -> Arabic v2</span>
+                    <span class="short" title="Latin -> Arabic v2">LA</span>
                 </a>
 		        <a id="tab3" class="unselected" href="#" onclick="return changeTab(3)">
                     <span class="full">Standardise Arabic</span>
@@ -604,7 +604,7 @@ textarea
     </table>
     <script type="text/javascript">
 
-var curTab = 1; //current tab
+var curTab = 6; //current tab
 var tabText = new Array('', '', '', '');
 
 //Latin to Arabic Array
@@ -990,7 +990,6 @@ function changeTab(tab) {
     else {
         document.getElementById('converting').style.display = 'block';
         document.getElementById('typeArabic').style.display = 'none';
-
     }
 
     //set the options related to the picked tab
@@ -1003,10 +1002,6 @@ function changeTab(tab) {
             document.getElementById('txtIn').dir = 'ltr';
             document.getElementById('txtOut').dir = 'rtl';
             break;
-        case 21: //Latin to Arabic 2
-            document.getElementById('txtIn').dir = 'ltr';
-            document.getElementById('txtOut').dir = 'rtl';
-            break;
         case 3: //Standardise Arabic
             document.getElementById('txtIn').dir = 'rtl';
             document.getElementById('txtOut').dir = 'rtl';
@@ -1015,6 +1010,11 @@ function changeTab(tab) {
             document.getElementById('txtIn').dir = 'ltr';
             document.getElementById('txtOut').dir = 'ltr';
             break;
+        case 6: //Latin to Arabic 2
+            document.getElementById('txtIn').dir = 'ltr';
+            document.getElementById('txtOut').dir = 'rtl';
+            break;
+            
     }
 
     //set the passed function parameter as the current tab
@@ -1060,29 +1060,6 @@ function convert() {
                 });
 
             break;
-
-            case 21: //Latin to Arabic 2
-                //main conversion
-                for (i = 0; i < sConvertLatin2Arabic2.length; i += 2)
-                    s = s.replace(new RegExp(sConvertLatin2Arabic2[i], 'gim'), sConvertLatin2Arabic2[i + 1]);
-
-                //convert numbers
-                if (document.getElementById('chkConvertNumbers').checked)
-                    for (i = 0; i < sNumbers.length; i += 2)
-                        s = s.replace(new RegExp(sNumbers[i], 'g'), sNumbers[i + 1]);
-
-                //convert ii and i based on the option selected
-                if (!document.getElementById('chkTreatI').checked)
-                    s = s.replace(new RegExp('ii', 'gi'), 'ی').replace(new RegExp('i', 'gi'), '');
-                else
-                    s = s.replace(new RegExp('i', 'gi'), 'ی');
-
-                //when user chooses to recoginse the dependent verb 'to be' can be separated (e.g. kurd in = kurdin)
-                if (document.getElementById('chkConnectSuffixes').checked)
-                    for (i = 0; i < sSuffixes.length; i++)
-                        s = s.replace(new RegExp(sSuffixes[i], 'gim'), '$1$2$3');
-
-                break;
 
 
             case 2: //Latin to Arabic
@@ -1132,6 +1109,29 @@ function convert() {
         case 4: //Type Latin
             for (i = 0; i < sConvertLatin.length; i += 2)
                 s = s.replace(new RegExp(sConvertLatin[i], 'g'), sConvertLatin[i + 1]);
+            break;
+
+        case 6: //Latin to Arabic 2
+            //main conversion
+            for (i = 0; i < sConvertLatin2Arabic2.length; i += 2)
+                s = s.replace(new RegExp(sConvertLatin2Arabic2[i], 'gim'), sConvertLatin2Arabic2[i + 1]);
+
+            //convert numbers
+            if (document.getElementById('chkConvertNumbers').checked)
+                for (i = 0; i < sNumbers.length; i += 2)
+                    s = s.replace(new RegExp(sNumbers[i], 'g'), sNumbers[i + 1]);
+
+            //convert ii and i based on the option selected
+            if (!document.getElementById('chkTreatI').checked)
+                s = s.replace(new RegExp('ii', 'gi'), 'ی').replace(new RegExp('i', 'gi'), '');
+            else
+                s = s.replace(new RegExp('i', 'gi'), 'ی');
+
+            //when user chooses to recoginse the dependent verb 'to be' can be separated (e.g. kurd in = kurdin)
+            if (document.getElementById('chkConnectSuffixes').checked)
+                for (i = 0; i < sSuffixes.length; i++)
+                    s = s.replace(new RegExp(sSuffixes[i], 'gim'), '$1$2$3');
+
             break;
     }
     document.getElementById('txtOut').value = s;
